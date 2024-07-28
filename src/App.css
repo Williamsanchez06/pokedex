@@ -374,6 +374,19 @@ img.heart-icon {
 
 /*===== START DETAIL POKEMON ======*/
 
+.fondo {
+  background-image: url(/src/assets/bola-pokemon-fondo.png);
+  background-size: cover;
+  background-position: center;
+  width: 31%;
+  height: 29%;
+  position: absolute;
+  top: -139px;
+  right: 19px;
+  z-index: -1;
+  opacity: 0.2;
+}
+
 .pokemon-container {
   width: 100%;
   min-height: 100vh;
@@ -599,3 +612,55 @@ img.heart-icon {
   }
 
 }
+
+/*===== END POKEMON DETAIL =====*/
+
+/*====== START LOADER ======*/
+
+@keyframes pokeball-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.container-loader {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 10px solid #fff;
+  border-top: 10px solid var(--primary-color);
+  border-radius: 50%;
+  animation: pokeball-spin 1s linear infinite;
+  position: relative;
+}
+
+.loader::before,
+.loader::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.loader::before {
+  width: 70%;
+  height: 70%;
+  background: #fff;
+  top: 15%;
+  left: 15%;
+}
+
+.loader::after {
+  width: 20%;
+  height: 20%;
+  background: var(--primary-color);
+  top: 40%;
+  left: 40%;
+}
+
+/*====== END LOADER ======*/

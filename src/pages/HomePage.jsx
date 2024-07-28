@@ -30,12 +30,27 @@ export const HomePage = () => {
     const [isSortVisible, setIsSortVisible] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [favorites, setFavorites] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (loading) {
+            document.body.classList.add('loading');
+        } else {
+            document.body.classList.remove('loading');
+        }
+
         if (data) {
             setPokemons(sortPokemons(data.pokemon_v2_pokemon, 'name'));
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 200);
         }
-    }, [data]);
+
+        // Cleanup body class on component unmount
+        return () => {
+            document.body.classList.remove('loading');
+        };
+    }, [data, loading]);
 
     useEffect(() => {
         setPokemons(prevPokemons => sortPokemons(prevPokemons, sortOption));
@@ -80,8 +95,8 @@ export const HomePage = () => {
 
     const filteredPokemons = filterPokemons(pokemons, searchValue, sortOption);
 
-    if (loading) return console.log('loading');
-    if (error) return console.log(error.message);
+    if (loading || isLoading) return <div className="container-loader"><div className="loader"></div></div>;
+    if (error) return <div>Error: {error.message}</div>;
 
     return (
         <div className="container">
