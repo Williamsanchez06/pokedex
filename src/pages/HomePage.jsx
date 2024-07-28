@@ -80,8 +80,8 @@ export const HomePage = () => {
 
     const filteredPokemons = filterPokemons(pokemons, searchValue, sortOption);
 
-    if (loading) return <p>Cargando...</p>;
-    if (error) return <p>Error: {error.message}</p>;
+    if (loading) return console.log('loading');
+    if (error) return console.log(error.message);
 
     return (
         <div className="container">
