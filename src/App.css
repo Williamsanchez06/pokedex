@@ -369,6 +369,14 @@ img.heart-icon {
     gap: 10px;
   }
 }
+
+.no-results {
+  text-align: center;
+  background: #fff;
+  padding: 33px;
+  border-radius: 10px;
+}
+
 /*===== END HOME PAGE =====*/
 
 

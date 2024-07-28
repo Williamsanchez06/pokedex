@@ -1,60 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faRulerVertical, faWeightHanging, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
-const GET_POKEMON_DETAILS = gql`
-  query GetPokemonDetails($id: Int!) {
-    pokemon_v2_pokemon_by_pk(id: $id) {
-      id
-      name
-      weight
-      height
-      base_experience
-      pokemon_v2_pokemonstats {
-        base_stat
-        pokemon_v2_stat {
-          name
-        }
-      }
-      pokemon_v2_pokemontypes {
-        pokemon_v2_type {
-          name
-        }
-      }
-      pokemon_v2_pokemonsprites {
-        sprites
-      }
-      pokemon_v2_pokemonmoves {
-        pokemon_v2_move {
-          name
-        }
-      }
-    }
-  }
-`;
-
-const typeColors = {
-    fire: '#F08030',
-    water: '#6890F0',
-    electric: '#F8D030',
-    grass: '#78C850',
-    ice: '#98D8D8',
-    fighting: '#C03028',
-    poison: '#A040A0',
-    ground: '#E0C068',
-    flying: '#A890F0',
-    psychic: '#F85888',
-    bug: '#A8B820',
-    rock: '#B8A038',
-    ghost: '#705898',
-    dragon: '#7038F8',
-    dark: '#705848',
-    steel: '#B8B8D0',
-    fairy: '#EE99AC',
-    default: 'gray'
-};
+import { usePokemonDetails } from '../hooks/usePokemonDetails';
 
 const statNames = {
     hp: 'HP',
@@ -70,47 +18,7 @@ const capitalizeFirstLetter = (string) => {
 };
 
 export const DetailPokemonPage = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { loading, error, data } = useQuery(GET_POKEMON_DETAILS, {
-        variables: { id: parseInt(id) }
-    });
-    const [typeColor, setTypeColor] = useState(typeColors.default);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        if (loading) {
-            document.body.classList.add('loading');
-        } else {
-            document.body.classList.remove('loading');
-        }
-
-        if (data && data.pokemon_v2_pokemon_by_pk) {
-            const pokemon = data.pokemon_v2_pokemon_by_pk;
-            const type = pokemon.pokemon_v2_pokemontypes?.[0]?.pokemon_v2_type?.name;
-            if (type) {
-                const color = typeColors[type] || typeColors.default;
-                document.body.style.backgroundColor = color;
-                setTypeColor(color);
-            }
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 200);
-        }
-
-        // Cleanup body style on component unmount
-        return () => {
-            document.body.style.backgroundColor = '';
-            document.body.classList.remove('loading');
-        };
-
-    }, [data, loading]);
-
-    useEffect(() => {
-        if (error || (data && !data.pokemon_v2_pokemon_by_pk)) {
-            navigate('/');
-        }
-    }, [error, data, navigate]);
+    const { loading, error, data, typeColor, isLoading } = usePokemonDetails();
 
     if (loading || isLoading) return <div className="container-loader"><div className="loader"></div></div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -122,7 +30,7 @@ export const DetailPokemonPage = () => {
 
     const pokemonTypes = pokemon.pokemon_v2_pokemontypes || [];
     const stats = pokemon.pokemon_v2_pokemonstats;
-    const isLeftDisabled = parseInt(id) === 1;
+    const isLeftDisabled = parseInt(pokemon.id) === 1;
 
     return (
         <div className="pokemon-container">
@@ -146,12 +54,12 @@ export const DetailPokemonPage = () => {
                                 <FontAwesomeIcon icon={faChevronLeft} size="2x" color="#d3d3d34f"/>
                             ) :
                             (
-                                <Link to={`/pokemon/${parseInt(id) - 1}`} className="nav-link">
+                                <Link to={`/pokemon/${parseInt(pokemon.id) - 1}`} className="nav-link">
                                     <FontAwesomeIcon icon={faChevronLeft} size="2x" />
                                 </Link>
                             )
                         }
-                        <Link to={`/pokemon/${parseInt(id) + 1}`} className="nav-link">
+                        <Link to={`/pokemon/${parseInt(pokemon.id) + 1}`} className="nav-link">
                             <FontAwesomeIcon icon={faChevronRight} size="2x" />
                         </Link>
                     </div>
@@ -161,7 +69,7 @@ export const DetailPokemonPage = () => {
                     {pokemonTypes.map(pokemonType => (
                         <span
                             className="type-badge"
-                            style={{ backgroundColor: typeColors[pokemonType.pokemon_v2_type.name] }}
+                            style={{ backgroundColor: typeColor }}
                             key={pokemonType.pokemon_v2_type.name}
                         >
                             {capitalizeFirstLetter(pokemonType.pokemon_v2_type.name)}

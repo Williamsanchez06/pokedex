@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { usePokemonList } from '../hooks/usePokemonList';
 
 import pokeballImage from '../assets/bola-pokemon.webp';
 import searchIcon from '../assets/search-icon.png';
@@ -9,91 +9,21 @@ import letraA from '../assets/letra-a.jfif';
 import corazonSinRelleno from '../assets/corazon-sin-relleno.png';
 import corazon from '../assets/corazon-relleno.jfif';
 
-const GET_POKEMONS = gql`
-  query GetPokemons($limit: Int, $offset: Int) {
-    pokemon_v2_pokemon(limit: $limit, offset: $offset) {
-      id
-      name
-      pokemon_v2_pokemonsprites {
-        sprites
-      }
-    }
-  }
-`;
-
 export const HomePage = () => {
-    const { loading, error, data } = useQuery(GET_POKEMONS, {
-        variables: { limit: 151, offset: 0 }
-    });
-    const [pokemons, setPokemons] = useState([]);
-    const [sortOption, setSortOption] = useState('name');
-    const [isSortVisible, setIsSortVisible] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
-    const [favorites, setFavorites] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        if (loading) {
-            document.body.classList.add('loading');
-        } else {
-            document.body.classList.remove('loading');
-        }
-
-        if (data) {
-            setPokemons(sortPokemons(data.pokemon_v2_pokemon, 'name'));
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 200);
-        }
-
-        // Cleanup body class on component unmount
-        return () => {
-            document.body.classList.remove('loading');
-        };
-    }, [data, loading]);
-
-    useEffect(() => {
-        setPokemons(prevPokemons => sortPokemons(prevPokemons, sortOption));
-    }, [sortOption]);
-
-    useEffect(() => {
-        const savedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        setFavorites(savedFavorites);
-    }, []);
-
-    const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-        setSearchValue('');
-    };
-
-    const toggleSortVisibility = () => {
-        setIsSortVisible(!isSortVisible);
-    };
-
-    const handleSearchChange = (e) => {
-        let value = e.target.value;
-        if (sortOption === 'number') {
-            value = value.replace(/[^0-9]/g, ''); // Allow only numbers
-        } else {
-            value = value.replace(/[^a-zA-Z]/g, ''); // Allow only letters
-        }
-        setSearchValue(value);
-    };
-
-    const toggleFavorite = (pokemon) => {
-        setFavorites((prevFavorites) => {
-            let updatedFavorites;
-            if (prevFavorites.includes(pokemon.id)) {
-                updatedFavorites = prevFavorites.filter(fav => fav !== pokemon.id);
-            } else {
-                updatedFavorites = [...prevFavorites, pokemon.id];
-            }
-            localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-            return updatedFavorites;
-        });
-    };
-
-    const filteredPokemons = filterPokemons(pokemons, searchValue, sortOption);
+    const {
+        loading,
+        error,
+        pokemons,
+        sortOption,
+        isSortVisible,
+        searchValue,
+        favorites,
+        isLoading,
+        handleSortChange,
+        toggleSortVisibility,
+        handleSearchChange,
+        toggleFavorite
+    } = usePokemonList();
 
     if (loading || isLoading) return <div className="container-loader"><div className="loader"></div></div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -158,39 +88,27 @@ export const HomePage = () => {
                 </div>
             </div>
 
-            <div className="pokemon-grid">
-                {filteredPokemons.map(pokemon => (
-                    <div key={pokemon.id} className="pokemon-card">
-                        <div className="pokemon-id">#{pokemon.id.toString().padStart(3, '0')}</div>
-                        <Link to={`/pokemon/${pokemon.id}`}>
-                            <img
-                                src={pokemon.pokemon_v2_pokemonsprites[0].sprites.front_default}
-                                alt={pokemon.name}
-                            />
-                            <h2>{pokemon.name}</h2>
-                        </Link>
-                        <button className="favorite-button" onClick={() => toggleFavorite(pokemon)}>
-                            <img src={favorites.includes(pokemon.id) ? corazon : corazonSinRelleno} alt="Favorite" className="heart-icon" />
-                        </button>
-                    </div>
-                ))}
-            </div>
+            {pokemons.length === 0 ? (
+                <div className="no-results">No hay resultados</div>
+            ) : (
+                <div className="pokemon-grid">
+                    {pokemons.map(pokemon => (
+                        <div key={pokemon.id} className="pokemon-card">
+                            <div className="pokemon-id">#{pokemon.id.toString().padStart(3, '0')}</div>
+                            <Link to={`/pokemon/${pokemon.id}`}>
+                                <img
+                                    src={pokemon.pokemon_v2_pokemonsprites[0].sprites.front_default}
+                                    alt={pokemon.name}
+                                />
+                                <h2>{pokemon.name}</h2>
+                            </Link>
+                            <button className="favorite-button" onClick={() => toggleFavorite(pokemon)}>
+                                <img src={favorites.includes(pokemon.id) ? corazon : corazonSinRelleno} alt="Favorite" className="heart-icon" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
-};
-
-const sortPokemons = (pokemons, sortOption) => {
-    if (sortOption === 'number') {
-        return [...pokemons].sort((a, b) => a.id - b.id);
-    } else {
-        return [...pokemons].sort((a, b) => a.name.localeCompare(b.name));
-    }
-};
-
-const filterPokemons = (pokemons, searchValue, sortOption) => {
-    if (sortOption === 'number') {
-        return pokemons.filter(pokemon => pokemon.id.toString().padStart(3, '0').includes(searchValue));
-    } else {
-        return pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(searchValue.toLowerCase()));
-    }
 };
