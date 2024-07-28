@@ -8,7 +8,7 @@
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background-color: var(--primary-color); /* Fondo rojo */
+  background-color: var(--primary-color);
 }
 
 a {
@@ -33,7 +33,7 @@ h1, h2, h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--primary-color); /* Fondo rojo */
+  background-color: var(--primary-color);
 }
 
 .header-top {
@@ -589,9 +589,10 @@ img.heart-icon {
 }
 
 @media (max-width: 420px) {
-  /*.pokemon-header-navigation {*/
-  /*  margin-left: 0.625rem;*/
-  /*}*/
+
+  .fondo {
+    width: 41%;
+  }
 
   .pokemon-id {
     margin-right: 0.75rem;
