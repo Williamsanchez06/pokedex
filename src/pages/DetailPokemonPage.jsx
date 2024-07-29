@@ -18,7 +18,7 @@ const capitalizeFirstLetter = (string) => {
 };
 
 export const DetailPokemonPage = () => {
-    const { loading, error, data, typeColor, isLoading } = usePokemonDetails();
+    const { loading, error, data, typeColor, isLoading, typeColors } = usePokemonDetails();
 
     if (loading || isLoading) return <div className="container-loader"><div className="loader"></div></div>;
     if (error) return <div>Error: {error.message}</div>;
@@ -67,9 +67,10 @@ export const DetailPokemonPage = () => {
                 </div>
                 <div className="pokemon-types">
                     {pokemonTypes.map(pokemonType => (
+
                         <span
                             className="type-badge"
-                            style={{ backgroundColor: typeColor }}
+                            style={{ backgroundColor: typeColors[pokemonType.pokemon_v2_type.name] }}
                             key={pokemonType.pokemon_v2_type.name}
                         >
                             {capitalizeFirstLetter(pokemonType.pokemon_v2_type.name)}

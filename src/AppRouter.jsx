@@ -2,8 +2,7 @@ import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
 import Navigation from "./components/Navigation.jsx";
-import { DetailPokemonPage, HomePage } from "./pages";
-import { FavoritesPage } from "./pages/FavoritesPage.jsx";
+import { DetailPokemonPage, HomePage, FavoritesPage } from "./pages";
 
 const AppRouter = () => {
     return (

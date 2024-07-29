@@ -21,6 +21,7 @@ const typeColors = {
     dark: '#705848',
     steel: '#B8B8D0',
     fairy: '#EE99AC',
+    normal: 'gray',
     default: 'gray'
 };
 
@@ -66,5 +67,5 @@ export const usePokemonDetails = () => {
         }
     }, [error, data, navigate]);
 
-    return { loading, error, data, typeColor, isLoading };
+    return { loading, error, data, typeColor, isLoading , typeColors };
 };
