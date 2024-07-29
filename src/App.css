@@ -255,6 +255,7 @@ h1, h2, h3 {
   justify-content: center;
   height: 78vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .pokemon-card {
@@ -415,6 +416,7 @@ img.heart-icon {
   align-content: start;
   height: 83vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .pokemon-favorites-card {
