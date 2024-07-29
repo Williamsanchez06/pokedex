@@ -36,7 +36,9 @@ export const HomePage = () => {
                     <span className="title">Pokédex</span>
                     <div className="favorites-container">
                         <div className="favorites-icon-container">
-                            <img src={corazon} alt="Favorites" className="favorites-icon" />
+                            <Link to="/favorites">
+                                <img src={corazon} alt="Favorites" className="favorites-icon" />
+                            </Link>
                             <span className="favorites-count">{favorites.length}</span>
                         </div>
                     </div>
