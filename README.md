@@ -18,11 +18,11 @@ Esta aplicación de React utiliza la API de Pokémon a través de GraphQL para m
 
 1. Clona este repositorio:
     ```bash
-    git clone https://github.com/Williamsanchez06/prueba_tita_media.git
+    git clone https://github.com/Williamsanchez06/pokedex.git
     ```
 2. Navega al directorio del proyecto:
     ```bash
-    cd prueba_tita_media
+    cd pokedex
     ```
 3. Instala las dependencias:
     ```bash
